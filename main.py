@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import qrcode
 from reportlab.platypus import Paragraph
 from reportlab.lib.utils import ImageReader, simpleSplit
@@ -9,6 +7,15 @@ from reportlab.pdfgen import canvas
 import argparse
 import subprocess as proc
 import sys
+import os
+
+# https://stackoverflow.com/questions/17317219/is-there-an-platform-independent-equivalent-of-os-startfile
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener ="open" if sys.platform == "darwin" else "xdg-open"
+        proc.call([opener, filename])
 
 # setup command-line arguments
 parser = argparse.ArgumentParser("Print labels for dymo label writer, optionally with a qr code and an icon")
@@ -115,7 +122,7 @@ c.save()
 print("Wrote '%s'" % args.output)
 
 if args.preview:
-    proc.check_output(['xdg-open', args.output])
+    open_file(args.output)
 
 # print
 if args.print:
